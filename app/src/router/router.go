@@ -1,8 +1,14 @@
 package router
 
-import "github.com/gorilla/mux"
+import (
+	"social-api/src/router/routers"
+
+	"github.com/gorilla/mux"
+)
 
 // Generate will return a router with configured routes
 func Generate() *mux.Router {
-	return mux.NewRouter()
+	r := mux.NewRouter()
+
+	return routers.Configurate(r)
 }
