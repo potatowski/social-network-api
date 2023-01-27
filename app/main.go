@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"social-api/src/config"
 	"social-api/src/router"
 )
 
 func main() {
+	config.Load()
 	router := router.Generate()
-	fmt.Println("Routing API")
-	log.Fatal(http.ListenAndServe((":5000"), router))
+	fmt.Printf("Routing API in port %d!", config.Port)
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), router))
 }
