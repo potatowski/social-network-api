@@ -2,42 +2,43 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"social-api/src/database"
 	"social-api/src/model"
 	"social-api/src/repository"
+	"social-api/src/response"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal(err)
+		response.Error(w, http.StatusUnprocessableEntity, err)
+		return
 	}
 
 	var user model.User
-
 	if err = json.Unmarshal(body, &user); err != nil {
-		log.Fatal(err)
+		response.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		log.Fatal(err)
+		response.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 
 	userRepository := repository.NewRepositoryUser(db)
 
-	userID, err := userRepository.Create(user)
+	user.ID, err = userRepository.Create(user)
 	if err != nil {
-		log.Fatal(err)
+		response.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("user: %d", userID)))
+	response.JSON(w, http.StatusCreated, user)
 }
 
 func SearchUsers(w http.ResponseWriter, r *http.Request) {
