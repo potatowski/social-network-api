@@ -2,13 +2,17 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"social-api/src/database"
 	"social-api/src/model"
 	"social-api/src/repository"
 	"social-api/src/response"
+	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +73,34 @@ func SearchUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchUserById(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Searching user by id"))
+	params := mux.Vars(r)
+
+	userId, err := strconv.ParseUint(params["userId"], 10, 64)
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	userRepository := repository.NewRepositoryUser(db)
+
+	user, err := userRepository.SearchById(userId)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if user.ID == 0 {
+		response.Error(w, http.StatusNotFound, errors.New("user not found"))
+	}
+
+	response.JSON(w, http.StatusOK, user)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {

@@ -38,7 +38,7 @@ func (userRepository User) Create(user model.User) (uint64, error) {
 	return uint64(userID), nil
 }
 
-// Create insert an user in database
+// Search try find an user in database by username or name
 func (userRepository User) Search(search string) ([]model.User, error) {
 	search = fmt.Sprintf("%%%s%%", search)
 
@@ -64,4 +64,27 @@ func (userRepository User) Search(search string) ([]model.User, error) {
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+func (userRepository User) SearchById(userID uint64) (model.User, error) {
+	row, err := userRepository.db.Query("SELECT id, name, username, email, created FROM user WHERE id = ?", userID)
+	var user model.User
+	if err != nil {
+		return user, err
+	}
+	defer row.Close()
+
+	if row.Next() {
+		if err = row.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Username,
+			&user.Email,
+			&user.Created,
+		); err != nil {
+			return user, err
+		}
+	}
+
+	return user, nil
 }
