@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"social-api/src/model"
 )
 
@@ -35,4 +36,32 @@ func (userRepository User) Create(user model.User) (uint64, error) {
 	}
 
 	return uint64(userID), nil
+}
+
+// Create insert an user in database
+func (userRepository User) Search(search string) ([]model.User, error) {
+	search = fmt.Sprintf("%%%s%%", search)
+
+	rows, err := userRepository.db.Query("SELECT id, name, username, email, created FROM user WHERE name LIKE ? or username LIKE ?", search, search)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []model.User
+	for rows.Next() {
+		var user model.User
+		if err = rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Username,
+			&user.Email,
+			&user.Created,
+		); err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+	return users, nil
 }

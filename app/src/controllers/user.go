@@ -8,6 +8,7 @@ import (
 	"social-api/src/model"
 	"social-api/src/repository"
 	"social-api/src/response"
+	"strings"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +48,24 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchUsers(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Searching all users"))
+	search := strings.ToLower(r.URL.Query().Get("search"))
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	userRepository := repository.NewRepositoryUser(db)
+
+	users, err := userRepository.Search(search)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, users)
 }
 
 func SearchUserById(w http.ResponseWriter, r *http.Request) {
