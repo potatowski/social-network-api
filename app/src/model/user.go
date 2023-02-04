@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+const (
+	Stage_register = "REGISTER"
+	Stage_update   = "UPDATE"
+)
+
 type User struct {
 	ID       uint64 `json:"id,omitempty"`
 	Name     string `json:"name,omitempty"`
@@ -16,8 +21,8 @@ type User struct {
 }
 
 // Prepare call functions to check and format user fields
-func (user *User) Prepare() error {
-	if err := user.check(); err != nil {
+func (user *User) Prepare(stage string) error {
+	if err := user.check(stage); err != nil {
 		return err
 	}
 
@@ -25,7 +30,7 @@ func (user *User) Prepare() error {
 	return nil
 }
 
-func (user *User) check() error {
+func (user *User) check(stage string) error {
 	if user.Name == "" {
 		return errors.New("Name is obrigatory")
 	}
@@ -38,7 +43,7 @@ func (user *User) check() error {
 		return errors.New("Email is obrigatory")
 	}
 
-	if user.Password == "" {
+	if stage == Stage_register && user.Password == "" {
 		return errors.New("Password is obrigatory")
 	}
 
