@@ -118,3 +118,24 @@ func (userRepository User) Delete(userID uint64) error {
 
 	return nil
 }
+
+// SearchByEmail try find an user in database by email
+func (userRepository User) SearchByEmail(email string) (model.User, error) {
+	row, err := userRepository.db.Query("SELECT id, password FROM user WHERE email = ? AND removed <> 1", email)
+	var user model.User
+	if err != nil {
+		return user, err
+	}
+	defer row.Close()
+
+	if row.Next() {
+		if err = row.Scan(
+			&user.ID,
+			&user.Password,
+		); err != nil {
+			return user, err
+		}
+	}
+
+	return user, nil
+}
