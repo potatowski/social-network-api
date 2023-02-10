@@ -15,6 +15,9 @@ var (
 
 	// Port where API will be running
 	Port = 0
+
+	// SecretKey is the key to generate tokens
+	SecretKey []byte
 )
 
 // Load will initialize environment variables
@@ -37,4 +40,6 @@ func Load() {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
