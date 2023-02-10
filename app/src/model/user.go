@@ -17,6 +17,7 @@ type User struct {
 	Username string `json:"username,omitempty"`
 	Email    string `json:"email,omitempty"`
 	Password string
+	Removed  bool      `json:"removed,omitempty"`
 	Created  time.Time `json:"created,omitempty"`
 }
 

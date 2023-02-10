@@ -9,4 +9,5 @@ CREATE TABLE users(
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(50) NOT NULL,
     created TIMESTAMP DEFAULT current_timestamp()
+    removed BOOLEAN DEFAULT false
 ) ENGINE=INNODB;
