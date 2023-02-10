@@ -42,7 +42,7 @@ func (userRepository User) Create(user model.User) (uint64, error) {
 func (userRepository User) Search(search string) ([]model.User, error) {
 	search = fmt.Sprintf("%%%s%%", search)
 
-	rows, err := userRepository.db.Query("SELECT id, name, username, email, created FROM user WHERE name LIKE ? or username LIKE ?", search, search)
+	rows, err := userRepository.db.Query("SELECT id, name, username, email, created FROM user WHERE name LIKE ? or username LIKE ? AND removed <> 1", search, search)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (userRepository User) Search(search string) ([]model.User, error) {
 }
 
 func (userRepository User) SearchById(userID uint64) (model.User, error) {
-	row, err := userRepository.db.Query("SELECT id, name, username, email, created FROM user WHERE id = ?", userID)
+	row, err := userRepository.db.Query("SELECT id, name, username, email, created FROM user WHERE id = ? AND removed <> 1", userID)
 	var user model.User
 	if err != nil {
 		return user, err
@@ -98,6 +98,21 @@ func (userRepository User) Update(userID uint64, user model.User) error {
 	defer statement.Close()
 
 	if _, err = statement.Exec(user.Name, user.Username, user.Email, userID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete remove an user in database
+func (userRepository User) Delete(userID uint64) error {
+	statement, err := userRepository.db.Prepare("UPDATE user SET removed = 1 WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(userID); err != nil {
 		return err
 	}
 
