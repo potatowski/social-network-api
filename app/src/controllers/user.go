@@ -9,6 +9,7 @@ import (
 	"social-api/src/model"
 	"social-api/src/repository"
 	"social-api/src/response"
+	"social-api/src/security"
 	"strconv"
 	"strings"
 
@@ -110,6 +111,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, http.StatusBadRequest, err)
 	}
 
+	userIDInToken, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDInToken {
+		response.Error(w, http.StatusForbidden, errors.New("you can only update your own user"))
+		return
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		response.Error(w, http.StatusUnprocessableEntity, err)
@@ -148,6 +160,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIDInToken, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDInToken {
+		response.Error(w, http.StatusForbidden, errors.New("you can only update your own user"))
 		return
 	}
 

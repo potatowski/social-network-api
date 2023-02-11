@@ -31,6 +31,16 @@ func ValidateToken(r *http.Request) error {
 	return errors.New("Invalid token")
 }
 
+// ExtractUserIDToken extract the user id from the token
+func ExtractUserIDToken(r *http.Request) (uint64, error) {
+	claims, err := extractClaims(r)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(claims["user"].(float64)), nil
+}
+
 // extractClaims extract the claims from the token
 func extractClaims(r *http.Request) (jwt.MapClaims, error) {
 	tokenString, err := getToken(r)
