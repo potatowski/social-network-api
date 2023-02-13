@@ -170,7 +170,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if userID != userIDInToken {
-		response.Error(w, http.StatusForbidden, errors.New("you can only update your own user"))
+		response.Error(w, http.StatusForbidden, errors.New("you can only delete your own user"))
 		return
 	}
 
