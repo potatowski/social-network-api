@@ -16,6 +16,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// CreateUser creates a new user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -52,6 +53,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, user)
 }
 
+// SearchUsers searches users by name or nickname
 func SearchUsers(w http.ResponseWriter, r *http.Request) {
 	search := strings.ToLower(r.URL.Query().Get("search"))
 
@@ -73,6 +75,7 @@ func SearchUsers(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, users)
 }
 
+// SearchUserById searches a user by id
 func SearchUserById(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
@@ -104,6 +107,7 @@ func SearchUserById(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, user)
 }
 
+// UpdateUser updates a user
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userID, err := strconv.ParseUint(params["userId"], 10, 64)
@@ -155,6 +159,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusNoContent, nil)
 }
 
+// DeleteUser sets a user as deleted
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userID, err := strconv.ParseUint(params["userId"], 10, 64)
