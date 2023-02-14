@@ -203,3 +203,37 @@ func (userRepository User) SearchFollowers(userId uint64) ([]model.User, error) 
 
 	return followers, nil
 }
+
+// SearchFollowing try find following of an user in database
+func (userRepository User) SearchFollowing(userId uint64) ([]model.User, error) {
+	rows, err := userRepository.db.Query(`
+		SELECT u.id, u.name, u.username, u.email, u.created
+		FROM user u
+		INNER JOIN follower f ON u.id = f.user_id
+		WHERE f.follower_id = ?
+		AND u.removed <> 1
+	`, userId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var following []model.User
+	for rows.Next() {
+		var user model.User
+		if err = rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Username,
+			&user.Email,
+			&user.Created,
+		); err != nil {
+			return nil, err
+		}
+
+		following = append(following, user)
+	}
+
+	return following, nil
+}
