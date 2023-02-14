@@ -318,3 +318,68 @@ func SearchUserFollowing(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusOK, following)
 }
+
+// UpdateUserPassword updates a user's password
+func UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["userId"], 10, 64)
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIDInToken, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIDInToken {
+		response.Error(w, http.StatusForbidden, errors.New("you can only update your own password"))
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var password model.Password
+	if err = json.Unmarshal(body, &password); err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	userRepository := repository.NewRepositoryUser(db)
+	oldPassword, err := userRepository.GetPasswordByUserId(userID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = security.Check(oldPassword, password.Old); err != nil {
+		response.Error(w, http.StatusUnauthorized, errors.New("incorrect password"))
+		return
+	}
+
+	newPass, err := security.Hash(password.New)
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = userRepository.UpdatePassword(userID, string(newPass)); err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+}
