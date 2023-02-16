@@ -16,6 +16,7 @@ type Post struct {
 	Likes   uint64    `json:"likes"`
 	UserID  uint64    `json:"user_id,omitempty"`
 	User    *User     `json:"user,omitempty"`
+	Removed bool      `json:"removed,omitempty"`
 	Created time.Time `json:"created,omitempty"`
 }
 

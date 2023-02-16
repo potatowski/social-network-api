@@ -28,6 +28,7 @@ CREATE TABLE post(
     body VARCHAR(255) NOT NULL,
     likes INT DEFAULT 0,
     user_id INT NOT NULL,
+    removed BOOLEAN DEFAULT false,
     FOREING KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     text VARCHAR(255) NOT NULL,
     created TIMESTAMP DEFAULT current_timestamp()
