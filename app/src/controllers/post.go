@@ -9,6 +9,8 @@ import (
 	"social-api/src/repository"
 	"social-api/src/response"
 	"social-api/src/security"
+
+	"github.com/gorilla/mux"
 )
 
 // CreatePost creates a new post
@@ -58,7 +60,26 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 func SearchPosts(w http.ResponseWriter, r *http.Request) {}
 
 // SearchPostByUuid searches a post by uuid
-func SearchPostByUuid(w http.ResponseWriter, r *http.Request) {}
+func SearchPostByUuid(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	postUUID := params["uuid"]
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	postRepository := repository.NewRepositoryPost(db)
+	post, err := postRepository.SearchByUuid(postUUID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, post)
+}
 
 // UpdatePost updates a post
 func UpdatePost(w http.ResponseWriter, r *http.Request) {}

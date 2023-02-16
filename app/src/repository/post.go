@@ -16,8 +16,8 @@ func NewRepositoryPost(db *sql.DB) *Post {
 }
 
 // Create creates a new post in database
-func (repository Post) Create(post model.Post) (uint64, error) {
-	statement, err := repository.db.Prepare("INSERT INTO post (uuid, title, body, user_id) values (?, ?, ?, ?)")
+func (postRepository Post) Create(post model.Post) (uint64, error) {
+	statement, err := postRepository.db.Prepare("INSERT INTO post (uuid, title, body, user_id) values (?, ?, ?, ?)")
 	if err != nil {
 		return 0, err
 	}
@@ -34,4 +34,39 @@ func (repository Post) Create(post model.Post) (uint64, error) {
 	}
 
 	return uint64(lastId), nil
+}
+
+func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
+	var post model.Post
+	rows, err := postRepository.db.Query(`
+		SELECT 
+			p.id, p.uuid, p.title, p.body, p.likes, p.created, p.user_id,
+			u.id, u.name, u.username, u.created
+		FROM post p INNER JOIN user u ON u.id = p.user_id
+		WHERE p.uuid = ? AND p.removed <> 1
+	`, uuid)
+	if err != nil {
+		return post, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		if err = rows.Scan(
+			&post.ID,
+			&post.UUID,
+			&post.Title,
+			&post.Body,
+			&post.Likes,
+			&post.Created,
+			&post.UserID,
+			&post.User.ID,
+			&post.User.Name,
+			&post.User.Username,
+			&post.User.Created,
+		); err != nil {
+			return post, err
+		}
+	}
+
+	return post, nil
 }
