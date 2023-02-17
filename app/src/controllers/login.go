@@ -47,6 +47,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	if err = security.Check(userSaved.Password, user.Password); err != nil {
 		response.Error(w, http.StatusUnauthorized, errors.New("Invalid credentials"))
+		return
 	}
 
 	token, err := security.CreateToken(userSaved.ID)
