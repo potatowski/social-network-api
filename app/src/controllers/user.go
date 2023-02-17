@@ -18,19 +18,14 @@ import (
 
 // CreateUser creates a new user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		response.Error(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-
 	var user model.User
-	if err = json.Unmarshal(body, &user); err != nil {
+
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		response.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	if err = user.Prepare(model.Stage_register); err != nil {
+	if err := user.Prepare(model.Stage_register); err != nil {
 		response.Error(w, http.StatusBadRequest, err)
 		return
 	}
