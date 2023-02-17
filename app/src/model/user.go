@@ -68,7 +68,7 @@ func (user *User) format(stage string) error {
 
 	if stage == Stage_register {
 		hash, err := security.Hash(user.Password)
-		if err == nil {
+		if err != nil {
 			return err
 		}
 		user.Password = string(hash)

@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+  nginx:
+    image: nginx:1.21.1
+    container_name: nginx
+    ports:
+      - "80:80"
+    networks:
+      - golang-net
+
+  db:
+    image: mysql:8.0.26
+    restart: always
+    environment:
+      MYSQL_DATABASE: socialnetwork
+      MYSQL_USER: golang
+      MYSQL_PASSWORD: golang
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3600:3306"
+    networks:
+    - golang-net
+    volumes:
+    - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  golang:
+    build:
+      context: .
+      dockerfile: ./docker/golang/Dockerfile
+    container_name: golang
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - golang-net
+    depends_on:
+      - db
+
+networks:
+  golang-net:
+    driver: bridge
