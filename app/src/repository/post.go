@@ -72,3 +72,44 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 
 	return post, nil
 }
+
+func (postRepository Post) SearchByUser(userId uint64) ([]model.Post, error) {
+	rows, err := postRepository.db.Query(`
+		SELECT DISTINCT 
+			p.uuid, p.title, p.body, p.likes, p.created,
+			u.id, u.name, u.username
+		FROM post p 
+		INNER JOIN user u ON u.id = p.user_id
+		INNER JOIN follower f ON p.user_id = f.user_id
+		WHERE (u.id = ? OR f.follower_id = ?) 
+		AND p.removed <> 1
+		ORDER BY 1 DESC`,
+		userId, userId,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []model.Post
+	for rows.Next() {
+		var post model.Post
+		var user model.User
+		if err = rows.Scan(
+			&post.UUID,
+			&post.Title,
+			&post.Body,
+			&post.Likes,
+			&post.Created,
+			&user.ID,
+			&user.Name,
+			&user.Username,
+		); err != nil {
+			return nil, err
+		}
+		post.User = &user
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}

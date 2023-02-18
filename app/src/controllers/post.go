@@ -56,8 +56,35 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, post)
 }
 
-// SearchPosts searches posts by title or content
-func SearchPosts(w http.ResponseWriter, r *http.Request) {}
+// SearchPosts searches posts by following users
+func SearchPosts(w http.ResponseWriter, r *http.Request) {
+	userId, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	postRepository := repository.NewRepositoryPost(db)
+	posts, err := postRepository.SearchByUser(userId)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, posts)
+}
 
 // SearchPostByUuid searches a post by uuid
 func SearchPostByUuid(w http.ResponseWriter, r *http.Request) {

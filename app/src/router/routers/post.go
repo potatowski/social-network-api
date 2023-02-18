@@ -19,19 +19,19 @@ var routersPost = []Route{
 		RequireAuthorization: true,
 	},
 	{
-		URI:                  "/post/{postUuid}",
+		URI:                  "/post/{uuid}",
 		Method:               http.MethodGet,
 		Function:             controllers.SearchPostByUuid,
 		RequireAuthorization: true,
 	},
 	{
-		URI:                  "/post/{postId}",
+		URI:                  "/post/{uuid}",
 		Method:               http.MethodPatch,
 		Function:             controllers.UpdatePost,
 		RequireAuthorization: true,
 	},
 	{
-		URI:                  "/post/{postId}",
+		URI:                  "/post/{uuid}",
 		Method:               http.MethodDelete,
 		Function:             controllers.DeletePost,
 		RequireAuthorization: true,
