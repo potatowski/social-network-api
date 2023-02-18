@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"social-api/src/database"
@@ -109,7 +110,59 @@ func SearchPostByUuid(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdatePost updates a post
-func UpdatePost(w http.ResponseWriter, r *http.Request) {}
+func UpdatePost(w http.ResponseWriter, r *http.Request) {
+	userId, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+	postUUID := params["uuid"]
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	postRepository := repository.NewRepositoryPost(db)
+	post, err := postRepository.SearchByUuid(postUUID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if post.UserID != userId {
+		response.Error(w, http.StatusForbidden, errors.New("you can't update this post"))
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		response.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var postUpdated model.Post
+	if err = json.Unmarshal(body, &postUpdated); err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = postUpdated.Prepare(model.Stage_update); err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = postRepository.Update(postUUID, postUpdated); err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+}
 
 // DeletePost deletes a post
 func DeletePost(w http.ResponseWriter, r *http.Request) {}

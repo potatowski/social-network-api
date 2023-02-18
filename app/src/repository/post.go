@@ -113,3 +113,17 @@ func (postRepository Post) SearchByUser(userId uint64) ([]model.Post, error) {
 
 	return posts, nil
 }
+
+func (postRepository Post) Update(uuid string, post model.Post) error {
+	statement, err := postRepository.db.Prepare("UPDATE post SET title = ?, body = ? WHERE uuid = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(post.Title, post.Body, uuid); err != nil {
+		return err
+	}
+
+	return nil
+}
