@@ -5,7 +5,7 @@ import (
 	"social-api/src/model"
 )
 
-// Post represents a post repository
+// Post represents an post repository
 type Post struct {
 	db *sql.DB
 }
@@ -51,6 +51,7 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 	defer rows.Close()
 
 	if rows.Next() {
+		var user model.User
 		if err = rows.Scan(
 			&post.ID,
 			&post.UUID,
@@ -59,13 +60,14 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 			&post.Likes,
 			&post.Created,
 			&post.UserID,
-			&post.User.ID,
-			&post.User.Name,
-			&post.User.Username,
-			&post.User.Created,
+			&user.ID,
+			&user.Name,
+			&user.Username,
+			&user.Created,
 		); err != nil {
 			return post, err
 		}
+		post.User = &user
 	}
 
 	return post, nil
