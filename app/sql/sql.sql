@@ -14,22 +14,21 @@ CREATE TABLE user(
 
 CREATE TABLE follower(
     user_id INT NOT NULL,
-    FOREING KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     follower_id INT NOT NULL,
-    FOREING KEY (follower_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (follower_id) REFERENCES user(id) ON DELETE CASCADE,
     created TIMESTAMP DEFAULT current_timestamp()
     PRIMARY KEY (user_id, follower_id)
 ) ENGINE=INNODB;
 
 CREATE TABLE post(
-    uuid VARCHAR(36) NOT NULL PRIMARY KEY,
+    uuid VARCHAR(36) NOT NULL UNIQUE,
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(50) NOT NULL,
     body VARCHAR(255) NOT NULL,
     likes INT DEFAULT 0,
     user_id INT NOT NULL,
     removed BOOLEAN DEFAULT false,
-    FOREING KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-    text VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     created TIMESTAMP DEFAULT current_timestamp()
 ) ENGINE=INNODB;
