@@ -12,7 +12,7 @@ type Post struct {
 	UUID    string    `json:"uuid,omitempty"`
 	ID      uint64    `json:"id,omitempty"`
 	Title   string    `json:"title,omitempty"`
-	Body    string    `json:"content,omitempty"`
+	Body    string    `json:"body,omitempty"`
 	Likes   uint64    `json:"likes"`
 	UserID  uint64    `json:"user_id,omitempty"`
 	User    *User     `json:"user,omitempty"`
@@ -22,7 +22,7 @@ type Post struct {
 
 // Prepare call functions to check and format post fields
 func (post *Post) Prepare(stage string) error {
-	if err := post.check(); err != nil {
+	if err := post.check(stage); err != nil {
 		return err
 	}
 
@@ -33,7 +33,7 @@ func (post *Post) Prepare(stage string) error {
 	return nil
 }
 
-func (post *Post) check() error {
+func (post *Post) check(stage string) error {
 	if post.Title == "" {
 		return errors.New("Title is obrigatory")
 	}
@@ -42,7 +42,7 @@ func (post *Post) check() error {
 		return errors.New("Body is obrigatory")
 	}
 
-	if (post.User == nil) || (post.User.ID == 0) {
+	if post.UserID == 0 && stage == Stage_register {
 		return errors.New("User is obrigatory")
 	}
 
