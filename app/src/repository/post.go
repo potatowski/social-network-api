@@ -200,3 +200,20 @@ func (postRepository Post) Like(post_id uint64, userId uint64) error {
 
 	return nil
 }
+
+// Unlike dislikes a post in database
+func (postRepository Post) Unlike(post_id uint64, userId uint64) error {
+	statement, err := postRepository.db.Prepare(`
+		DELETE FROM post_like WHERE post_id = ? AND user_id = ?
+	`)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(post_id, userId); err != nil {
+		return err
+	}
+
+	return nil
+}

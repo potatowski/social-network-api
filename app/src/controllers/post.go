@@ -261,3 +261,36 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusNoContent, nil)
 }
+
+// UnlikePost dislikes a post
+func UnlikePost(w http.ResponseWriter, r *http.Request) {
+	userId, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+	postUUID := params["uuid"]
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	postRepository := repository.NewRepositoryPost(db)
+	post, err := postRepository.SearchByUuid(postUUID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = postRepository.Unlike(post.ID, userId); err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+}

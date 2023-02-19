@@ -48,4 +48,10 @@ var routersPost = []Route{
 		Function:             controllers.LikePost,
 		RequireAuthorization: true,
 	},
+	{
+		URI:                  "/post/{uuid}/like",
+		Method:               http.MethodDelete,
+		Function:             controllers.UnlikePost,
+		RequireAuthorization: true,
+	},
 }
