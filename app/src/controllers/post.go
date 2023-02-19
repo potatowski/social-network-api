@@ -165,4 +165,39 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 // DeletePost deletes a post
-func DeletePost(w http.ResponseWriter, r *http.Request) {}
+func DeletePost(w http.ResponseWriter, r *http.Request) {
+	userId, err := security.ExtractUserIDToken(r)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+	postUUID := params["uuid"]
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	postRepository := repository.NewRepositoryPost(db)
+	post, err := postRepository.SearchByUuid(postUUID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if post.UserID != userId {
+		response.Error(w, http.StatusForbidden, errors.New("you can't update this post"))
+		return
+	}
+
+	if err = postRepository.Delete(postUUID); err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+}
