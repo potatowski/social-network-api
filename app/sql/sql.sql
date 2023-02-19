@@ -32,3 +32,4 @@ CREATE TABLE post(
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     created TIMESTAMP DEFAULT current_timestamp()
 ) ENGINE=INNODB;
+CREATE INDEX idx_post_uuid ON post (uuid);
