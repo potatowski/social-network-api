@@ -142,3 +142,42 @@ func (postRepository Post) Delete(uuid string) error {
 
 	return nil
 }
+
+func (postRepository Post) SearchByUser(userID uint64) ([]model.Post, error) {
+	rows, err := postRepository.db.Query(`
+		SELECT 
+			p.uuid, p.title, p.body, p.likes, p.created, p.user_id,
+			u.id, u.name, u.username, u.created
+		FROM post p INNER JOIN user u ON u.id = p.user_id
+		WHERE p.user_id = ? AND p.removed <> 1
+		ORDER BY p.created DESC
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []model.Post
+	if rows.Next() {
+		var post model.Post
+		var user model.User
+		if err = rows.Scan(
+			&post.UUID,
+			&post.Title,
+			&post.Body,
+			&post.Likes,
+			&post.Created,
+			&post.UserID,
+			&user.ID,
+			&user.Name,
+			&user.Username,
+			&user.Created,
+		); err != nil {
+			return nil, err
+		}
+		post.User = &user
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}

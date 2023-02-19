@@ -10,6 +10,7 @@ import (
 	"social-api/src/repository"
 	"social-api/src/response"
 	"social-api/src/security"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -200,4 +201,30 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusNoContent, nil)
+}
+
+// SearchPostsByUser searches posts by user
+func SearchPostsByUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["userID"], 10, 64)
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	postRepository := repository.NewRepositoryPost(db)
+	posts, err := postRepository.SearchByUser(userID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, posts)
 }
