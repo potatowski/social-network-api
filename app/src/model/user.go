@@ -15,11 +15,11 @@ const (
 )
 
 type User struct {
-	ID       uint64 `json:"id,omitempty"`
-	Name     string `json:"name,omitempty"`
-	Username string `json:"username,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Password string
+	ID       uint64    `json:"id,omitempty"`
+	Name     string    `json:"name,omitempty"`
+	Username string    `json:"username,omitempty"`
+	Email    string    `json:"email,omitempty"`
+	Password string    `json:"password,omitempty"`
 	Removed  bool      `json:"removed,omitempty"`
 	Created  time.Time `json:"created,omitempty"`
 }
@@ -68,7 +68,7 @@ func (user *User) format(stage string) error {
 
 	if stage == Stage_register {
 		hash, err := security.Hash(user.Password)
-		if err == nil {
+		if err != nil {
 			return err
 		}
 		user.Password = string(hash)

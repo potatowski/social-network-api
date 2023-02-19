@@ -28,7 +28,7 @@ func ValidateToken(r *http.Request) error {
 		return err
 	}
 
-	return errors.New("Invalid token")
+	return nil
 }
 
 // ExtractUserIDToken extract the user id from the token
