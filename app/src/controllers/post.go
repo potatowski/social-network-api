@@ -73,7 +73,7 @@ func SearchPosts(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	postRepository := repository.NewRepositoryPost(db)
-	posts, err := postRepository.SearchByUser(userId)
+	posts, err := postRepository.SearchUserFollowing(userId)
 	if err != nil {
 		response.Error(w, http.StatusInternalServerError, err)
 		return

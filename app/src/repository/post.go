@@ -73,7 +73,7 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 	return post, nil
 }
 
-func (postRepository Post) SearchByUser(userId uint64) ([]model.Post, error) {
+func (postRepository Post) SearchUserFollowing(userId uint64) ([]model.Post, error) {
 	rows, err := postRepository.db.Query(`
 		SELECT DISTINCT 
 			p.uuid, p.title, p.body, p.likes, p.created,
