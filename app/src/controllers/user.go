@@ -18,19 +18,14 @@ import (
 
 // CreateUser creates a new user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		response.Error(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-
 	var user model.User
-	if err = json.Unmarshal(body, &user); err != nil {
+
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		response.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	if err = user.Prepare(model.Stage_register); err != nil {
+	if err := user.Prepare(model.Stage_register); err != nil {
 		response.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -102,6 +97,7 @@ func SearchUserById(w http.ResponseWriter, r *http.Request) {
 
 	if user.ID == 0 {
 		response.Error(w, http.StatusNotFound, errors.New("user not found"))
+		return
 	}
 
 	response.JSON(w, http.StatusOK, user)
@@ -113,6 +109,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	userIDInToken, err := security.ExtractUserIDToken(r)
