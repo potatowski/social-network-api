@@ -19,7 +19,7 @@ type User struct {
 	Name     string    `json:"name,omitempty"`
 	Username string    `json:"username,omitempty"`
 	Email    string    `json:"email,omitempty"`
-	Password string    `json:"-"`
+	Password string    `json:"password,omitempty"`
 	Removed  bool      `json:"removed,omitempty"`
 	Created  time.Time `json:"created,omitempty"`
 }
