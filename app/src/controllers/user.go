@@ -97,6 +97,7 @@ func SearchUserById(w http.ResponseWriter, r *http.Request) {
 
 	if user.ID == 0 {
 		response.Error(w, http.StatusNotFound, errors.New("user not found"))
+		return
 	}
 
 	response.JSON(w, http.StatusOK, user)
@@ -108,6 +109,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, err)
+		return
 	}
 
 	userIDInToken, err := security.ExtractUserIDToken(r)
