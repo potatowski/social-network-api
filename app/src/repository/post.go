@@ -40,7 +40,7 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 	var post model.Post
 	rows, err := postRepository.db.Query(`
 	SELECT 
-		p.id, p.uuid, p.title, p.body, (SELECT COUNT(1) FROM post_like pl WHERE pl.post_id = p.id) as likes, p.created, p.user_id,
+		p.id, p.uuid, p.title, p.body, (SELECT COUNT(1) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes, p.created, p.user_id,
 		u.id, u.name, u.username, u.created
 	FROM post p
 	INNER JOIN user u ON u.id = p.user_id
@@ -77,7 +77,7 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 func (postRepository Post) SearchUserFollowing(userId uint64) ([]model.Post, error) {
 	rows, err := postRepository.db.Query(`
 		SELECT DISTINCT 
-			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id) as likes, p.created,
+			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes, p.created,
 			u.id, u.name, u.username
 		FROM post p 
 		INNER JOIN user u ON u.id = p.user_id
@@ -147,7 +147,7 @@ func (postRepository Post) Delete(uuid string) error {
 func (postRepository Post) SearchByUser(userID uint64) ([]model.Post, error) {
 	rows, err := postRepository.db.Query(`
 		SELECT 
-			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id) as likes, p.created, p.user_id,
+			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes, p.created, p.user_id,
 			u.id, u.name, u.username, u.created
 		FROM post p INNER JOIN user u ON u.id = p.user_id
 		WHERE p.user_id = ? AND p.removed <> 1
@@ -186,15 +186,15 @@ func (postRepository Post) SearchByUser(userID uint64) ([]model.Post, error) {
 // Like likes a post in database
 func (postRepository Post) Like(post_id uint64, userId uint64) error {
 	statement, err := postRepository.db.Prepare(`
-		INSERT IGNORE INTO post_like (post_id, user_id) 
-		VALUES (?, ?)
+		INSERT IGNORE INTO post_like (post_id, user_id, type) 
+		VALUES (?, ?, ?)
 	`)
 	if err != nil {
 		return err
 	}
 	defer statement.Close()
 
-	if _, err = statement.Exec(post_id, userId); err != nil {
+	if _, err = statement.Exec(post_id, userId, model.POST_TYPE_LIKE); err != nil {
 		return err
 	}
 

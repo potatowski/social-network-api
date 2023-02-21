@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+const (
+	POST_TYPE_LIKE    = 1
+	POST_TYPE_DISLIKE = 2
+)
+
 // Post represents a publication created by a user
 type Post struct {
 	UUID    string    `json:"uuid,omitempty"`

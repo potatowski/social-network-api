@@ -38,5 +38,6 @@ CREATE TABLE post_like(
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     post_id INT NOT NULL,
     FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
+    `type` INT NOT NULL DEFAULT 1,
     PRIMARY KEY (user_id, post_id)
 ) ENGINE=INNODB;
