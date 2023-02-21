@@ -40,7 +40,8 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 	var post model.Post
 	rows, err := postRepository.db.Query(`
 	SELECT 
-		p.id, p.uuid, p.title, p.body, (SELECT COUNT(1) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes, p.created, p.user_id,
+		p.id, p.uuid, p.title, p.body, (SELECT COUNT(1) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes,
+		(SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 2) as dislikes, p.created, p.user_id,
 		u.id, u.name, u.username, u.created
 	FROM post p
 	INNER JOIN user u ON u.id = p.user_id
@@ -59,6 +60,7 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 			&post.Title,
 			&post.Body,
 			&post.Likes,
+			&post.Dislikes,
 			&post.Created,
 			&post.UserID,
 			&user.ID,
@@ -77,7 +79,8 @@ func (postRepository Post) SearchByUuid(uuid string) (model.Post, error) {
 func (postRepository Post) SearchUserFollowing(userId uint64) ([]model.Post, error) {
 	rows, err := postRepository.db.Query(`
 		SELECT DISTINCT 
-			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes, p.created,
+			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes,
+			(SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 2) as dislikes, p.created,
 			u.id, u.name, u.username
 		FROM post p 
 		INNER JOIN user u ON u.id = p.user_id
@@ -101,6 +104,7 @@ func (postRepository Post) SearchUserFollowing(userId uint64) ([]model.Post, err
 			&post.Title,
 			&post.Body,
 			&post.Likes,
+			&post.Dislikes,
 			&post.Created,
 			&user.ID,
 			&user.Name,
@@ -147,7 +151,8 @@ func (postRepository Post) Delete(uuid string) error {
 func (postRepository Post) SearchByUser(userID uint64) ([]model.Post, error) {
 	rows, err := postRepository.db.Query(`
 		SELECT 
-			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes, p.created, p.user_id,
+			p.uuid, p.title, p.body, (SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 1) as likes,
+			(SELECT COUNT(*) FROM post_like pl WHERE pl.post_id = p.id AND type = 2) as dislikes, p.created, p.user_id,
 			u.id, u.name, u.username, u.created
 		FROM post p INNER JOIN user u ON u.id = p.user_id
 		WHERE p.user_id = ? AND p.removed <> 1
@@ -167,6 +172,7 @@ func (postRepository Post) SearchByUser(userID uint64) ([]model.Post, error) {
 			&post.Title,
 			&post.Body,
 			&post.Likes,
+			&post.Dislikes,
 			&post.Created,
 			&post.UserID,
 			&user.ID,
@@ -186,7 +192,7 @@ func (postRepository Post) SearchByUser(userID uint64) ([]model.Post, error) {
 // Like likes a post in database
 func (postRepository Post) Like(post_id uint64, userId uint64) error {
 	statement, err := postRepository.db.Prepare(`
-		INSERT IGNORE INTO post_like (post_id, user_id, type) 
+		REPLACE INTO post_like (post_id, user_id, type) 
 		VALUES (?, ?, ?)
 	`)
 	if err != nil {
@@ -212,6 +218,24 @@ func (postRepository Post) Unlike(post_id uint64, userId uint64) error {
 	defer statement.Close()
 
 	if _, err = statement.Exec(post_id, userId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Dislike dislikes a post in database
+func (postRepository Post) Dislike(post_id uint64, userId uint64) error {
+	statement, err := postRepository.db.Prepare(`
+		REPLACE INTO post_like (post_id, user_id, type) 
+		VALUES (?, ?, ?)
+	`)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(post_id, userId, model.POST_TYPE_DISLIKE); err != nil {
 		return err
 	}
 

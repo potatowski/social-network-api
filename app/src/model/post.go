@@ -14,15 +14,16 @@ const (
 
 // Post represents a publication created by a user
 type Post struct {
-	UUID    string    `json:"uuid,omitempty"`
-	ID      uint64    `json:"id,omitempty"`
-	Title   string    `json:"title,omitempty"`
-	Body    string    `json:"body,omitempty"`
-	Likes   uint64    `json:"likes"`
-	UserID  uint64    `json:"user_id,omitempty"`
-	User    *User     `json:"user,omitempty"`
-	Removed bool      `json:"removed,omitempty"`
-	Created time.Time `json:"created,omitempty"`
+	UUID     string    `json:"uuid,omitempty"`
+	ID       uint64    `json:"id,omitempty"`
+	Title    string    `json:"title,omitempty"`
+	Body     string    `json:"body,omitempty"`
+	Likes    uint64    `json:"likes"`
+	Dislikes uint64    `json:"dislikes"`
+	UserID   uint64    `json:"user_id,omitempty"`
+	User     *User     `json:"user,omitempty"`
+	Removed  bool      `json:"removed,omitempty"`
+	Created  time.Time `json:"created,omitempty"`
 }
 
 // Prepare call functions to check and format post fields

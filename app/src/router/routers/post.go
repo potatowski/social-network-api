@@ -54,4 +54,10 @@ var routersPost = []Route{
 		Function:             controllers.UnlikePost,
 		RequireAuthorization: true,
 	},
+	{
+		URI:                  "/post/{uuid}/dislike",
+		Method:               http.MethodPost,
+		Function:             controllers.DislikePost,
+		RequireAuthorization: true,
+	},
 }
