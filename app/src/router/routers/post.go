@@ -2,62 +2,62 @@ package routers
 
 import (
 	"net/http"
-	"social-api/src/controllers"
+	"social-api/src/controller"
 )
 
 var routersPost = []Route{
 	{
 		URI:                  "/post",
 		Method:               http.MethodPost,
-		Function:             controllers.CreatePost,
+		Function:             controller.CreatePost,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/posts",
 		Method:               http.MethodGet,
-		Function:             controllers.SearchPosts,
+		Function:             controller.SearchPosts,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/post/{uuid}",
 		Method:               http.MethodGet,
-		Function:             controllers.SearchPostByUuid,
+		Function:             controller.SearchPostByUuid,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/post/{uuid}",
 		Method:               http.MethodPatch,
-		Function:             controllers.UpdatePost,
+		Function:             controller.UpdatePost,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/post/{uuid}",
 		Method:               http.MethodDelete,
-		Function:             controllers.DeletePost,
+		Function:             controller.DeletePost,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/user/{userID}/posts",
 		Method:               http.MethodGet,
-		Function:             controllers.SearchPostsByUser,
+		Function:             controller.SearchPostsByUser,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/post/{uuid}/like",
 		Method:               http.MethodPost,
-		Function:             controllers.LikePost,
+		Function:             controller.LikePost,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/post/{uuid}/like",
 		Method:               http.MethodDelete,
-		Function:             controllers.UnlikePost,
+		Function:             controller.UnlikePost,
 		RequireAuthorization: true,
 	},
 	{
 		URI:                  "/post/{uuid}/dislike",
 		Method:               http.MethodPost,
-		Function:             controllers.DislikePost,
+		Function:             controller.DislikePost,
 		RequireAuthorization: true,
 	},
 }

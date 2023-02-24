@@ -1,12 +1,12 @@
 package routers
 
 import (
-	"social-api/src/controllers"
+	"social-api/src/controller"
 )
 
 var loginRoute = Route{
 	URI:                  "/login",
 	Method:               "POST",
-	Function:             controllers.Login,
+	Function:             controller.Login,
 	RequireAuthorization: false,
 }
