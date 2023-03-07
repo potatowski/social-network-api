@@ -1,9 +1,6 @@
 package model
 
 import (
-	"errors"
-	"social-api/src/service"
-	"strings"
 	"time"
 )
 
