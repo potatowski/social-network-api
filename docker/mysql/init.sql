@@ -41,3 +41,25 @@ CREATE TABLE post_like(
     `type` INT NOT NULL DEFAULT 1,
     PRIMARY KEY (user_id, post_id)
 ) ENGINE=INNODB;
+
+CREATE TABLE comment(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) NOT NULL UNIQUE,
+    body VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    post_id INT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
+    created TIMESTAMP DEFAULT current_timestamp()
+) ENGINE=INNODB;
+
+CREATE INDEX idx_comment_uuid ON comment (uuid);
+
+CREATE TABLE comment_like(
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    comment_id INT NOT NULL,
+    FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE,
+    `type` INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (user_id, comment_id)
+) ENGINE=INNODB;
