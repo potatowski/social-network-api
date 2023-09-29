@@ -1,4 +1,4 @@
-# Social Network API &middot; ![Go Version](https://img.shields.io/badge/go-%3E=1.17-blue) ![Potatowski Tag](https://img.shields.io/badge/potatowski-%3E=social%20network%20api-blue) ![License](https://img.shields.io/github/license/potatowski/social-network-api)
+# Social Network API &middot; ![MIT License](https://img.shields.io/github/license/potatowski/social-network-api) ![Go Version](https://img.shields.io/badge/go-%3E=1.17-blue) ![Potatowski Tag](https://img.shields.io/badge/potatowski-social%20network%20api-blue) 
 
 This is a API (Application Programming Interface) to a social media or microblogging platform that allows users to post short messages with title based on Twitter
 
