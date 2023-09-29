@@ -23,10 +23,10 @@ Follow these steps:
    ```bash
    git checkout -b <change-type>/<what-will-be-worked-on>
    ```
-   Example:
-      ```bash
-      git checkout -b feat/post
-      ```
+   > Example:
+   ```bash
+   git checkout -b feat/post
+   ```
 5. **Submit a Pull Request:** push your branch to your repository on GitHub to dev branch
 
 ## Setting Up the Project for Development
