@@ -1,4 +1,4 @@
-# Social Network API &middot; ![MIT License](https://img.shields.io/github/license/potatowski/social-network-api) ![Go Version](https://img.shields.io/badge/go-%3E=1.17-blue) ![Potatowski Tag](https://img.shields.io/badge/potatowski-social%20network%20api-blue) 
+# Social Network API &middot; ![MIT License](https://img.shields.io/badge/license-MIT-green) ![Go Version](https://img.shields.io/badge/go-%3E=1.17-blue) ![Potatowski Tag](https://img.shields.io/badge/potatowski-social%20network%20api-blue) 
 
 This is a API (Application Programming Interface) to a social media or microblogging platform that allows users to post short messages with title based on Twitter
 
@@ -46,3 +46,7 @@ Now, you're all set to start working on the project and contribute to its develo
 ## Changelog
 
 Here [Changelog](CHANGELOG.md) to see latest updates and changes.
+
+## License
+
+This project is [MIT License](LICENSE)
