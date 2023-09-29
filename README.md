@@ -12,21 +12,21 @@ Has a issue list [here](https://github.com/potatowski/social-network-api/issues)
 Follow these steps:
 1. **Fork this Repository:** Click the "Fork" button in the top right corner of the page. This will create a copy of the repository in your GitHub account.
 2. **Clone the Project Repository:** Clone the project repository to your local machine using Git. Navigate to the desired directory and run the following command
-```bash
-git clone https://github.com/<your-username>/social-network-api.git
-```
+   ```bash
+   git clone https://github.com/<your-username>/social-network-api.git
+   ```
 3. **Navigate to the Project Directory:** Change your current directory to the project folder using the cd command
- ```bash
-cd /social-network-api
-```
+   ```bash
+   cd /social-network-api
+   ```
 4. **Create a New Branch:** create a new branch for your changes
-```bash
-git checkout -b <change-type>/<what-will-be-worked-on>
-```
-Example:
-```bash
-git checkout -b feat/post
-```
+   ```bash
+   git checkout -b <change-type>/<what-will-be-worked-on>
+   ```
+   Example:
+      ```bash
+      git checkout -b feat/post
+      ```
 5. **Submit a Pull Request:** push your branch to your repository on GitHub to dev branch
 
 ## Setting Up the Project for Development
@@ -37,9 +37,9 @@ To get started with the project and begin coding contributions, follow these ste
 3. **Access the project folder:** Navigate to the directory where the project is
 4. **Create env file:** Create .env.local file in folder **/app** and added all enviroment variables to run the application, has a exemple [here](/app/.env.example)
 5. **Run Docker Composer:** Run the docker-compose up command to start the necessary containers and services specified in the docker-compose.yml file, the Docker Compose will handle the setup and orchestration of the project's dependencies and environment.
-```bash
-docker-compose up
-```
+   ```bash
+   docker-compose up
+   ```
 
 Now, you're all set to start working on the project and contribute to its development. Open the API testing tool (Insomnia or Postman) to interact with the project's APIs and begin coding!
 
