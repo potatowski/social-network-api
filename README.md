@@ -5,7 +5,9 @@ This is a API (Application Programming Interface) to a social media or microblog
 
 ## Contributing
 
-The main purpose of this repository is to continue evolving, making it faster and easier to use. Development of Social Network API happens in the open on GitHub, and I are grateful to the community for contributing bugfixes and improvements.
+This repository is a project written in the GO language, simulating the flow of a social network, in which the user can create an account, follow other participants and post text content based on the Twitter and TabNews model.
+
+I'm leaving the code open so that the community can contribute with improvements and bug fixes. In addition, I hope that the project contributes to the learning of others who, like me, are independently seeking the knowledge they need to develop their hard skills further.
 
 Has a issue list [here](https://github.com/potatowski/social-network-api/issues), you can add some need, functionality, or develop some of them, even refactor, just follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) in your commits
 
